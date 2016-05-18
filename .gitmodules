@@ -1,0 +1,3 @@
+[submodule "galaxy"]
+	path = galaxy
+	url = https://github.com/erasche/docker-galaxy-annotation
