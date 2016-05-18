@@ -11,6 +11,7 @@ services:
         - "./nginx/conf:/etc/nginx/conf.d"
   galaxy:
     build: galaxy
+    #image: quay.io/erasche/docker-galaxy-annotation
     environment:
         NONUSE: nodejs,proftp,reports
         GALAXY_LOGGING: full
