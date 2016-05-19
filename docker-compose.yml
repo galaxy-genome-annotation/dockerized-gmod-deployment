@@ -36,11 +36,11 @@ services:
     environment:
       POSTGRES_PASSWORD: password
   apollo_admin:
-	build: apollo
-	links:
-		- apollo
-	environment:
-	  ADMIN_USERNAME: galaxy@gmod.org
-	  ADMIN_FIRST_NAME: Galaxy
-	  ADMIN_LAST_NAME: Admin
-	  ADMIN_PASSWORD: admin
+    build: apollo
+    links:
+      - apollo
+    environment:
+      ADMIN_USERNAME: galaxy@gmod.org
+      ADMIN_FIRST_NAME: Galaxy
+      ADMIN_LAST_NAME: Admin
+      ADMIN_PASSWORD: admin
