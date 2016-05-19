@@ -17,8 +17,6 @@ services:
         GALAXY_WEBAPOLLO_URL: "http://apollo:8080/apollo"
         GALAXY_WEBAPOLLO_EXT_URL: "/apollo"
         GALAXY_WEBAPOLLO_PASSWORD: "admin"
-    volumes:
-        - "./data:/apollo-data"
   apollo:
     image: gmod/apollo:stable
     links:
