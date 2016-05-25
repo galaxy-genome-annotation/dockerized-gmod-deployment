@@ -40,7 +40,7 @@ services:
   apollo_admin:
     build: apollo
     links:
-        - apollo
+      - apollo
     environment:
       ADMIN_USERNAME: galaxy@gmod.org
       ADMIN_FIRST_NAME: Galaxy
