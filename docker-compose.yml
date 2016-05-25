@@ -20,7 +20,7 @@ services:
         GALAXY_WEBAPOLLO_USER: galaxy@gmod.org
         GALAXY_SHARED_DIR: /apollo-data
   apollo:
-    image: gmod/apollo:stable
+    image: quay.io/erasche/apollo:master
     links:
       - "apollo_db:db"
     environment:
