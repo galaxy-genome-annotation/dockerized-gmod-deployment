@@ -16,8 +16,8 @@ services:
         GALAXY_LOGGING: full
         GALAXY_WEBAPOLLO_URL: "http://apollo:8080/apollo"
         GALAXY_WEBAPOLLO_EXT_URL: "/apollo"
-        GALAXY_WEBAPOLLO_PASSWORD: "admin"
-        GALAXY_WEBAPOLLO_USER: galaxy@gmod.org
+        GALAXY_WEBAPOLLO_PASSWORD: "password"
+        GALAXY_WEBAPOLLO_USER: admin@local.host
         GALAXY_SHARED_DIR: /apollo-data
   apollo:
     image: quay.io/erasche/apollo:master
@@ -35,12 +35,3 @@ services:
     image: postgres
     environment:
       POSTGRES_PASSWORD: password
-  apollo_admin:
-    build: apollo
-    links:
-      - apollo
-    environment:
-      ADMIN_USERNAME: galaxy@gmod.org
-      ADMIN_FIRST_NAME: Galaxy
-      ADMIN_LAST_NAME: Admin
-      ADMIN_PASSWORD: admin
