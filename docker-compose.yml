@@ -17,6 +17,8 @@ services:
         GALAXY_WEBAPOLLO_URL: "http://apollo:8080/apollo"
         GALAXY_WEBAPOLLO_EXT_URL: "/apollo"
         GALAXY_WEBAPOLLO_PASSWORD: "admin"
+        GALAXY_WEBAPOLLO_USER: galaxy@gmod.org
+        GALAXY_SHARED_DIR: /apollo-data
     volumes:
         - "./data:/apollo-data"
   apollo:
