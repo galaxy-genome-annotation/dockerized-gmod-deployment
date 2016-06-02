@@ -3,14 +3,15 @@ services:
   proxy:
     image: nginx
     ports:
-        - "80"
+        - "8080:80"
     links:
         - apollo
         - galaxy
     volumes:
         - "./nginx/conf:/etc/nginx/conf.d"
   galaxy:
-    image: quay.io/erasche/docker-galaxy-annotation
+    #image: quay.io/erasche/docker-galaxy-annotation
+    image: agx
     environment:
         NONUSE: nodejs,proftp,reports
         GALAXY_LOGGING: full
@@ -20,7 +21,7 @@ services:
         GALAXY_WEBAPOLLO_USER: admin@local.host
         GALAXY_SHARED_DIR: /apollo-data
   apollo:
-    image: quay.io/erasche/apollo:master
+    image: apollo
     links:
       - "apollo_db:db"
     environment:
@@ -29,9 +30,38 @@ services:
       WEBAPOLLO_DB_DRIVER: "org.postgresql.Driver"
       WEBAPOLLO_DB_DIALECT: "org.hibernate.dialect.PostgresPlusDialect"
       WEBAPOLLO_DB_URI: "jdbc:postgresql://db/postgres"
+      WEBAPOLLO_CHADO_DB_USERNAME: postgres
+      WEBAPOLLO_CHADO_DB_PASSWORD: password
+      WEBAPOLLO_CHADO_DB_DRIVER: "org.postgresql.Driver"
+      WEBAPOLLO_CHADO_DB_DIALECT: "org.hibernate.dialect.PostgresPlusDialect"
+      WEBAPOLLO_CHADO_DB_URI: "jdbc:postgresql://chado/postgres"
     volumes_from:
         - "galaxy:ro"
   apollo_db:
     image: postgres
     environment:
       POSTGRES_PASSWORD: password
+  tripal:
+    image: erasche/tripal:latest
+    links:
+      - chado:postgres
+    volumes:
+      - /var/www/html/sites
+      - /var/www/private
+    environment:
+      UPLOAD_LIMIT: 20M
+      MEMORY_LIMIT: 128M
+      BASE_URL: "http://localhost:8080/tripal"
+      BASE_URL_PROTO: "http://"
+      DB_DRIVER: pgsql
+      DB_NAME: postgres
+      DB_HOST: postgres
+      DB_PASS: password
+      DB_USER: postgres
+  chado:
+    image: erasche/chado:latest
+    environment:
+      - POSTGRES_PASSWORD=password
+        # The default chado image would try to install the schema on first run,
+        # we just want the tools to be available.
+      - INSTALL_CHADO_SCHEMA=0
