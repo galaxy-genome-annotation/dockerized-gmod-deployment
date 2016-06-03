@@ -3,7 +3,7 @@ services:
   proxy:
     image: nginx
     ports:
-        - "8080:80"
+        - "80"
     links:
         - apollo
         - galaxy
@@ -40,23 +40,23 @@ services:
     image: postgres
     environment:
       POSTGRES_PASSWORD: password
-  tripal:
-    image: erasche/tripal:latest
-    links:
-      - chado:postgres
-    volumes:
-      - /var/www/html/sites
-      - /var/www/private
-    environment:
-      UPLOAD_LIMIT: 20M
-      MEMORY_LIMIT: 128M
-      BASE_URL: "http://localhost:8080/tripal"
-      BASE_URL_PROTO: "http://"
-      DB_DRIVER: pgsql
-      DB_NAME: postgres
-      DB_HOST: postgres
-      DB_PASS: password
-      DB_USER: postgres
+  #tripal:
+    #image: erasche/tripal:latest
+    #links:
+      #- chado:postgres
+    #volumes:
+      #- /var/www/html/sites
+      #- /var/www/private
+    #environment:
+      #UPLOAD_LIMIT: 20M
+      #MEMORY_LIMIT: 128M
+      #BASE_URL: "http://localhost:8080/tripal"
+      #BASE_URL_PROTO: "http://"
+      #DB_DRIVER: pgsql
+      #DB_NAME: postgres
+      #DB_HOST: postgres
+      #DB_PASS: password
+      #DB_USER: postgres
   chado:
     image: erasche/chado:latest
     environment:
