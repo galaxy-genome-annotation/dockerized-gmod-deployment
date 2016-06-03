@@ -10,8 +10,7 @@ services:
     volumes:
         - "./nginx/conf:/etc/nginx/conf.d"
   galaxy:
-    #image: quay.io/erasche/docker-galaxy-annotation
-    image: agx
+    image: quay.io/erasche/docker-galaxy-annotation
     environment:
         NONUSE: nodejs,proftp,reports
         GALAXY_LOGGING: full
@@ -21,7 +20,7 @@ services:
         GALAXY_WEBAPOLLO_USER: admin@local.host
         GALAXY_SHARED_DIR: /apollo-data
   apollo:
-    image: apollo
+    image: gmod/apollo:latest
     links:
       - "apollo_db:db"
     environment:
