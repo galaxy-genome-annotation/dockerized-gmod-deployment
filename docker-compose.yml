@@ -1,14 +1,16 @@
 version: '2'
 services:
+
   proxy:
     image: nginx
     ports:
-        - "80"
+        - "8200:80"
     links:
         - apollo
         - galaxy
     volumes:
         - "./nginx/conf:/etc/nginx/conf.d"
+
   galaxy:
     image: quay.io/erasche/docker-galaxy-annotation
     environment:
@@ -19,6 +21,7 @@ services:
         GALAXY_WEBAPOLLO_PASSWORD: "password"
         GALAXY_WEBAPOLLO_USER: admin@local.host
         GALAXY_SHARED_DIR: /apollo-data
+
   apollo:
     image: gmod/apollo:latest
     links:
@@ -36,10 +39,47 @@ services:
       WEBAPOLLO_CHADO_DB_URI: "jdbc:postgresql://chado/postgres"
     volumes_from:
         - "galaxy:ro"
+
   apollo_db:
     image: postgres
     environment:
       POSTGRES_PASSWORD: password
+
+  postgrest:
+    image: postgrest
+    links:
+      - "chado:db"
+    ports:
+      - "8300:8000"
+    environment:
+      POSTGREST_JWT_SECRET: thisisnotarealsecret
+      POSTGREST_SCHEMA: public
+      PG_PASSWORD: password
+      PG_DB: postgres
+
+  ngadmin:
+    image: chado-angular-admin
+    links:
+      - "postgrest"
+    ports:
+      - "8400:8080"
+
+  chado_jb:
+    image: chado-jb
+    environment:
+      - POSTGRES_PASSWORD=password
+    links:
+      - "chado:db"
+    ports:
+      - "8500:8500"
+
+  chado:
+    image: erasche/chado:latest
+    environment:
+      - POSTGRES_PASSWORD=password
+        # The default chado image would try to install the schema on first run,
+        # we just want the tools to be available.
+      - INSTALL_CHADO_SCHEMA=1
   #tripal:
     #image: erasche/tripal:latest
     #links:
@@ -57,10 +97,3 @@ services:
       #DB_HOST: postgres
       #DB_PASS: password
       #DB_USER: postgres
-  chado:
-    image: erasche/chado:latest
-    environment:
-      - POSTGRES_PASSWORD=password
-        # The default chado image would try to install the schema on first run,
-        # we just want the tools to be available.
-      - INSTALL_CHADO_SCHEMA=0
