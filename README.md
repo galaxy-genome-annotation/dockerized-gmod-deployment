@@ -3,22 +3,26 @@
 This docker-compose.yml file specifies all of the infrastructure needed to run
 a linked Galaxy and Apollo instance.
 
+![](./apollo.png)
+
 
 ## Running
 
 ```
 $ docker-compose up -d
-$ docker-compose ps proxy
-Name                  Command                State   Ports
------------------------------------------------------------------------------------
-galaxyapollo_proxy_1  nginx -g daemon off;   Up      443/tcp, 0.0.0.0:32772->80/tcp
-
+$ docker-compose logs
 ```
 
-As you can see, the second command has printed out the port binding of the
-proxy. You should be able to navigate to localhost:32772 (if you're running
-boot2docker/on OSX you may need to find the VM's IP address first), and access
-the integrated Apollo/Galaxy instances.
+## Services:
+
+Service                 | Port
+----------------------- | ----
+Galaxy                  | 8200
+Apollo (through Galaxy) | 8200
+PostgREST               | 8300
+Angular Chado Admin     | 8400
+Chado JBrowse Connector | 8500
+
 
 ## LICENSE
 
