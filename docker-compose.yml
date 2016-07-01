@@ -2,7 +2,7 @@ version: '2'
 services:
 
   proxy:
-    image: nginx
+    image: nginx:latest
     ports:
         - "8200:80"
     links:
@@ -41,12 +41,12 @@ services:
         - "galaxy:ro"
 
   apollo_db:
-    image: postgres
+    image: postgres:9.4
     environment:
       POSTGRES_PASSWORD: password
 
   postgrest:
-    image: postgrest
+    image: erasche/postgrest:latest
     links:
       - "chado:db"
     ports:
@@ -58,14 +58,14 @@ services:
       PG_DB: postgres
 
   ngadmin:
-    image: chado-angular-admin
+    image: quay.io/erasche/chado-angular-admin:latest
     links:
       - "postgrest"
     ports:
       - "8400:8080"
 
   chado_jb:
-    image: chado-jb
+    image: quay.io/erasche/chado-jbrowse-connector:latest
     environment:
       - POSTGRES_PASSWORD=password
     links:
