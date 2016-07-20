@@ -8,6 +8,7 @@ services:
     links:
         - apollo
         - galaxy
+        - tripal
     volumes:
         - "./nginx/conf:/etc/nginx/conf.d"
 
@@ -36,7 +37,7 @@ services:
       WEBAPOLLO_CHADO_DB_PASSWORD: password
       WEBAPOLLO_CHADO_DB_DRIVER: "org.postgresql.Driver"
       WEBAPOLLO_CHADO_DB_DIALECT: "org.hibernate.dialect.PostgresPlusDialect"
-      WEBAPOLLO_CHADO_DB_URI: "jdbc:postgresql://chado/postgres"
+      WEBAPOLLO_CHADO_DB_URI: "jdbc:postgresql://tripal_db/postgres"
     volumes_from:
         - "galaxy:ro"
 
@@ -48,7 +49,7 @@ services:
   postgrest:
     image: erasche/postgrest:latest
     links:
-      - "chado:db"
+      - "tripal_db:db"
     ports:
       - "8300:8000"
     environment:
@@ -69,31 +70,34 @@ services:
     environment:
       - POSTGRES_PASSWORD=password
     links:
-      - "chado:db"
+      - "tripal_db:db"
     ports:
       - "8500:8500"
 
-  chado:
+  tripal_db:
     image: erasche/chado:latest
     environment:
       - POSTGRES_PASSWORD=password
         # The default chado image would try to install the schema on first run,
         # we just want the tools to be available.
-      - INSTALL_CHADO_SCHEMA=1
-  #tripal:
-    #image: erasche/tripal:latest
-    #links:
-      #- chado:postgres
-    #volumes:
-      #- /var/www/html/sites
-      #- /var/www/private
-    #environment:
-      #UPLOAD_LIMIT: 20M
-      #MEMORY_LIMIT: 128M
-      #BASE_URL: "http://localhost:8080/tripal"
-      #BASE_URL_PROTO: "http://"
-      #DB_DRIVER: pgsql
-      #DB_NAME: postgres
-      #DB_HOST: postgres
-      #DB_PASS: password
-      #DB_USER: postgres
+      - INSTALL_CHADO_SCHEMA=0
+
+  tripal:
+    image: erasche/tripal:latest
+    links:
+      - tripal_db:postgres
+    volumes:
+      - /var/www/html/sites
+      - /var/www/private
+    environment:
+      UPLOAD_LIMIT: 20M
+      MEMORY_LIMIT: 128M
+      BASE_URL: "http://localhost:8080/tripal"
+      BASE_URL_PROTO: "http://"
+      # FIXME Deprecated ENV var added for compatibility: https://docs.docker.com/compose/link-env-deprecated/
+      POSTGRES_PORT_5432_TCP_ADDR: postgres
+      POSTGRES_PORT_5432_TCP_PORT: 5432
+      POSTGRES_PORT_5432_TCP: tcp://postgres:5432
+      POSTGRES_ENV_POSTGRES_PASSWORD: password
+    ports:
+      - "8080:80"
