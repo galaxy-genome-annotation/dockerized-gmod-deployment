@@ -8,6 +8,7 @@ services:
     links:
         - apollo
         - galaxy
+        - tripal
     volumes:
         - "./nginx/conf:/etc/nginx/conf.d"
 
@@ -26,6 +27,7 @@ services:
     image: gmod/apollo:latest
     links:
       - "apollo_db:db"
+      - "tripal_db"
     environment:
       WEBAPOLLO_DB_USERNAME: postgres
       WEBAPOLLO_DB_PASSWORD: password
@@ -33,10 +35,10 @@ services:
       WEBAPOLLO_DB_DIALECT: "org.hibernate.dialect.PostgresPlusDialect"
       WEBAPOLLO_DB_URI: "jdbc:postgresql://db/postgres"
       WEBAPOLLO_CHADO_DB_USERNAME: postgres
-      WEBAPOLLO_CHADO_DB_PASSWORD: password
+      WEBAPOLLO_CHADO_DB_PASSWORD: postgres
       WEBAPOLLO_CHADO_DB_DRIVER: "org.postgresql.Driver"
       WEBAPOLLO_CHADO_DB_DIALECT: "org.hibernate.dialect.PostgresPlusDialect"
-      WEBAPOLLO_CHADO_DB_URI: "jdbc:postgresql://chado/postgres"
+      WEBAPOLLO_CHADO_DB_URI: "jdbc:postgresql://tripal_db/postgres"
     volumes_from:
         - "galaxy:ro"
 
@@ -46,15 +48,15 @@ services:
       POSTGRES_PASSWORD: password
 
   postgrest:
-    image: erasche/postgrest:latest
+    image: quay.io/erasche/postgrest:latest
     links:
-      - "chado:db"
+      - "tripal_db:db"
     ports:
       - "8300:8000"
     environment:
       POSTGREST_JWT_SECRET: thisisnotarealsecret
       POSTGREST_SCHEMA: public
-      PG_PASSWORD: password
+      PG_PASSWORD: postgres
       PG_DB: postgres
 
   ngadmin:
@@ -69,31 +71,31 @@ services:
     environment:
       - POSTGRES_PASSWORD=password
     links:
-      - "chado:db"
+      - "tripal_db:db"
     ports:
       - "8500:8500"
 
-  chado:
+  tripal_db:
     image: erasche/chado:latest
     environment:
-      - POSTGRES_PASSWORD=password
+      - POSTGRES_PASSWORD=postgres
         # The default chado image would try to install the schema on first run,
         # we just want the tools to be available.
-      - INSTALL_CHADO_SCHEMA=1
-  #tripal:
-    #image: erasche/tripal:latest
-    #links:
-      #- chado:postgres
-    #volumes:
-      #- /var/www/html/sites
-      #- /var/www/private
-    #environment:
-      #UPLOAD_LIMIT: 20M
-      #MEMORY_LIMIT: 128M
-      #BASE_URL: "http://localhost:8080/tripal"
-      #BASE_URL_PROTO: "http://"
-      #DB_DRIVER: pgsql
-      #DB_NAME: postgres
-      #DB_HOST: postgres
-      #DB_PASS: password
-      #DB_USER: postgres
+      - INSTALL_CHADO_SCHEMA=0
+    volumes:
+      - /var/lib/postgresql/9.4/
+
+  tripal:
+    image: tripal
+    links:
+      - tripal_db:postgres
+    volumes:
+      - /var/www/html/sites
+      - /var/www/private
+    environment:
+      UPLOAD_LIMIT: 20M
+      MEMORY_LIMIT: 128M
+      BASE_URL: "http://localhost:8080/tripal"
+      BASE_URL_PROTO: "http://"
+    ports:
+      - "8080:80"
