@@ -27,6 +27,7 @@ services:
     image: gmod/apollo:latest
     links:
       - "apollo_db:db"
+      - "tripal_db"
     environment:
       WEBAPOLLO_DB_USERNAME: postgres
       WEBAPOLLO_DB_PASSWORD: password
@@ -34,7 +35,7 @@ services:
       WEBAPOLLO_DB_DIALECT: "org.hibernate.dialect.PostgresPlusDialect"
       WEBAPOLLO_DB_URI: "jdbc:postgresql://db/postgres"
       WEBAPOLLO_CHADO_DB_USERNAME: postgres
-      WEBAPOLLO_CHADO_DB_PASSWORD: password
+      WEBAPOLLO_CHADO_DB_PASSWORD: postgres
       WEBAPOLLO_CHADO_DB_DRIVER: "org.postgresql.Driver"
       WEBAPOLLO_CHADO_DB_DIALECT: "org.hibernate.dialect.PostgresPlusDialect"
       WEBAPOLLO_CHADO_DB_URI: "jdbc:postgresql://tripal_db/postgres"
@@ -55,7 +56,7 @@ services:
     environment:
       POSTGREST_JWT_SECRET: thisisnotarealsecret
       POSTGREST_SCHEMA: public
-      PG_PASSWORD: password
+      PG_PASSWORD: postgres
       PG_DB: postgres
 
   ngadmin:
@@ -77,13 +78,15 @@ services:
   tripal_db:
     image: erasche/chado:latest
     environment:
-      - POSTGRES_PASSWORD=password
+      - POSTGRES_PASSWORD=postgres
         # The default chado image would try to install the schema on first run,
         # we just want the tools to be available.
       - INSTALL_CHADO_SCHEMA=0
+    volumes:
+      - /var/lib/postgresql/9.4/
 
   tripal:
-    image: erasche/tripal:latest
+    image: tripal
     links:
       - tripal_db:postgres
     volumes:
@@ -94,10 +97,5 @@ services:
       MEMORY_LIMIT: 128M
       BASE_URL: "http://localhost:8080/tripal"
       BASE_URL_PROTO: "http://"
-      # FIXME Deprecated ENV var added for compatibility: https://docs.docker.com/compose/link-env-deprecated/
-      POSTGRES_PORT_5432_TCP_ADDR: postgres
-      POSTGRES_PORT_5432_TCP_PORT: 5432
-      POSTGRES_PORT_5432_TCP: tcp://postgres:5432
-      POSTGRES_ENV_POSTGRES_PASSWORD: password
     ports:
       - "8080:80"
