@@ -47,7 +47,7 @@ services:
       POSTGRES_PASSWORD: password
 
   postgrest:
-    image: erasche/postgrest:latest
+    image: quay.io/erasche/postgrest:latest
     links:
       - "tripal_db:db"
     ports:
