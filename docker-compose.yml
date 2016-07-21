@@ -79,7 +79,7 @@ services:
       - "postgrest"
       - "postgrest_tripal"
     ports:
-      - "8400:8080"
+      - "8400:80"
 
   chado_jb:
     image: quay.io/erasche/chado-jbrowse-connector:latest
