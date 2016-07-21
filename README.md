@@ -3,7 +3,7 @@
 This docker-compose.yml file specifies all of the infrastructure needed to run
 a linked Galaxy and Apollo instance.
 
-![](./apollo.png)
+![](./media/network.png)
 
 
 ## Running
