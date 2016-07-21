@@ -9,6 +9,8 @@ services:
         - apollo
         - galaxy
         - tripal
+        - ngadmin
+        - chado_jb
     volumes:
         - "./nginx/conf:/etc/nginx/conf.d"
 
@@ -110,5 +112,5 @@ services:
       MEMORY_LIMIT: 128M
       BASE_URL: "http://localhost:8080/tripal"
       BASE_URL_PROTO: "http://"
-    ports:
-      - "8080:80"
+    #ports:
+      #- "8080:80"
