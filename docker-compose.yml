@@ -11,6 +11,9 @@ services:
         - tripal
         - ngadmin
         - chado_jb
+        - jbrowse
+        - postgrest
+        - postgrest_tripal
     volumes:
         - "./nginx/conf:/etc/nginx/conf.d"
 
@@ -53,8 +56,6 @@ services:
     image: quay.io/erasche/postgrest:latest
     links:
       - "tripal_db:db"
-    ports:
-      - "8300:8000"
     environment:
       POSTGREST_JWT_SECRET: thisisnotarealsecret
       POSTGREST_SCHEMA: chado
@@ -65,8 +66,6 @@ services:
     image: quay.io/erasche/postgrest:latest
     links:
       - "tripal_db:db"
-    ports:
-      - "8350:8000"
     environment:
       POSTGREST_JWT_SECRET: thisisnotarealsecret
       POSTGREST_SCHEMA: public
@@ -86,6 +85,7 @@ services:
     environment:
       POSTGRES_PASSWORD: postgres
       SITE_PATH: "http://localhost:8200/jbrowse/"
+      JBROWSE: "http://localhost:8200/jbrowse_actual/"
     links:
       - "tripal_db:db"
     ports:
@@ -115,3 +115,8 @@ services:
       BASE_URL_PROTO: "http://"
     #ports:
       #- "8080:80"
+
+  jbrowse:
+    image: erasche/jbrowse:1.12.0
+    ports:
+        - "80"

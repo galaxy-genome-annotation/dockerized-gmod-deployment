@@ -58,6 +58,20 @@ Service | Username         | Password
 Galaxy  | admin@galaxy.org | admin
 Tripal  | admin            | changeme
 
+## Dependencies
+
+This `docker-compose.yml` depends on a large number of containers. We link some
+build status images here for developer convenience
+
+Image               | Status
+-----               | ------
+galaxy              | ![](https://quay.io/repository/erasche/docker-galaxy-annotation/status)
+postgrest           | ![](https://quay.io/repository/erasche/postgrest/status)
+chado-angular       | ![](https://quay.io/repository/erasche/chado-angular-admin/status)
+chado-jb-connectory | ![](https://quay.io/repository/erasche/chado-jbrowse-connector/status)
+chado               | ![](https://quay.io/repository/erasche/chado/status)
+tripal              | ![](https://quay.io/repository/erasche/tripal/status)
+
 ## LICENSE
 
 GPLv3
