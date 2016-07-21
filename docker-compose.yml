@@ -111,7 +111,7 @@ services:
     environment:
       UPLOAD_LIMIT: 20M
       MEMORY_LIMIT: 128M
-      BASE_URL: "http://localhost:8080/tripal"
+      BASE_URL: "http://localhost:8200/tripal"
       BASE_URL_PROTO: "http://"
     #ports:
       #- "8080:80"
