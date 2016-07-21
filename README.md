@@ -18,11 +18,11 @@ $ docker-compose logs
 Service                          | Port
 -------------------------------- | ----
 Galaxy                           | 8200
-Tripal (/tripal)                 | 8200
-Apollo (through Galaxy, /apollo) | 8200
+Tripal (/tripal)                 | 8200/tripal
+Apollo (through Galaxy, /apollo) | 8200/apollo
 PostgREST                        | 8300
-Angular Chado Admin              | 8400
-Chado JBrowse Connector          | 8500
+Angular Chado Admin              | 8200/chado/
+Chado JBrowse Connector          | 8200/jbrowse/
 
 ## Credentials
 
