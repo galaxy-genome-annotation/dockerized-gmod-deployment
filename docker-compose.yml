@@ -84,7 +84,8 @@ services:
   chado_jb:
     image: quay.io/erasche/chado-jbrowse-connector:latest
     environment:
-      - POSTGRES_PASSWORD=postgres
+      POSTGRES_PASSWORD: postgres
+      SITE_PATH: "http://localhost:8200/jbrowse/"
     links:
       - "tripal_db:db"
     ports:
@@ -101,7 +102,7 @@ services:
       - /var/lib/postgresql/9.4/
 
   tripal:
-    image: tripal
+    image: quay.io/erasche/tripal:latest
     links:
       - tripal_db:postgres
     volumes:
