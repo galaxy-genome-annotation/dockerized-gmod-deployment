@@ -69,7 +69,7 @@ services:
   chado_jb:
     image: quay.io/erasche/chado-jbrowse-connector:latest
     environment:
-      - POSTGRES_PASSWORD=password
+      - POSTGRES_PASSWORD=postgres
     links:
       - "tripal_db:db"
     ports:
