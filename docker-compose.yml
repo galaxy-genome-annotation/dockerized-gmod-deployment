@@ -55,6 +55,18 @@ services:
       - "8300:8000"
     environment:
       POSTGREST_JWT_SECRET: thisisnotarealsecret
+      POSTGREST_SCHEMA: chado
+      PG_PASSWORD: postgres
+      PG_DB: postgres
+
+  postgrest_tripal:
+    image: quay.io/erasche/postgrest:latest
+    links:
+      - "tripal_db:db"
+    ports:
+      - "8350:8000"
+    environment:
+      POSTGREST_JWT_SECRET: thisisnotarealsecret
       POSTGREST_SCHEMA: public
       PG_PASSWORD: postgres
       PG_DB: postgres
@@ -63,6 +75,7 @@ services:
     image: quay.io/erasche/chado-angular-admin:latest
     links:
       - "postgrest"
+      - "postgrest_tripal"
     ports:
       - "8400:8080"
 
