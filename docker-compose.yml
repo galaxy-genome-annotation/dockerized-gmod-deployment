@@ -113,6 +113,8 @@ services:
       MEMORY_LIMIT: 128M
       BASE_URL: "http://localhost:8200/tripal"
       BASE_URL_PROTO: "http://"
+      TRIPAL_GIT_CLONE_MODULES: "https://github.com/abretaud/tripal_rest_api.git"
+      TRIPAL_ENABLE_MODULES: "tripal_rest_api"
     #ports:
       #- "8080:80"
 
