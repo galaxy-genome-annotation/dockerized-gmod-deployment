@@ -27,6 +27,7 @@ services:
         GALAXY_WEBAPOLLO_PASSWORD: "password"
         GALAXY_WEBAPOLLO_USER: admin@local.host
         GALAXY_SHARED_DIR: /apollo-data
+        GALAXY_JBROWSE_SHARED_DIR: /jbrowse/data
 
   apollo:
     image: gmod/apollo:latest
@@ -118,5 +119,7 @@ services:
 
   jbrowse:
     image: erasche/jbrowse:1.12.0
+    volumes_from:
+        - "galaxy:ro"
     ports:
         - "80"
