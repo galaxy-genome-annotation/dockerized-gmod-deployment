@@ -86,14 +86,17 @@ services:
       PG_DB: postgres
 
   postgraphql:
-    image: postgraphql
+    image: erasche/postgraphql:latest
     environment:
         DB_GRAPHQL_PATH: "/graphql"
         DB_GRAPHIQL_PATH: "/graphiql"
         PG_SECRET: "deadbeefcafe"
-        DB_URI: "postgres://postgres:postgres@db:5432/postgres"
         DB_SCHEMA: "public"
-        CORS: 1
+        PGHOST: db
+        PGUSER: postgres
+        PGPASSWORD: postgres
+        PGPORT: 5432
+        PGDATABASE: postgres
     links:
         - "tripal_db:db"
 
@@ -122,7 +125,7 @@ services:
       - "8500:8500"
 
   tripal_db:
-    image: erasche/chado:latest
+    image: erasche/chado:1.31-jenkins97-pg9.5
     environment:
       - POSTGRES_PASSWORD=postgres
         # The default chado image would try to install the schema on first run,
