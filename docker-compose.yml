@@ -14,8 +14,19 @@ services:
         - jbrowse
         - postgrest
         - postgrest_tripal
+        - postgraphql
     volumes:
-        - "./nginx/conf:/etc/nginx/conf.d"
+        - "./nginx:/etc/nginx/conf.d"
+
+  remoteuser:
+    image: "quay.io/erasche/gx-cookie-proxy:latest"
+    environment:
+      GALAXY_DB_URL: "postgresql://postgres:postgres@db.postgres.rancher.internal:5432/postgres?client_encoding=utf8&sslmode=disable"
+      GALAXY_SECRET: "?????"
+      GXC_BACKEND_URL: "target:8080"
+    links:
+      - galaxy:galaxy
+      - apollo:target
 
   galaxy:
     image: quay.io/erasche/docker-galaxy-annotation
@@ -30,11 +41,12 @@ services:
         GALAXY_JBROWSE_SHARED_DIR: /jbrowse/data
 
   apollo:
-    image: gmod/apollo:latest
+    image: quay.io/erasche/apollo:remote_user
     links:
       - "apollo_db:db"
       - "tripal_db"
     environment:
+      CONTEXT_PATH: "apollo"
       WEBAPOLLO_DB_USERNAME: postgres
       WEBAPOLLO_DB_PASSWORD: password
       WEBAPOLLO_DB_DRIVER: "org.postgresql.Driver"
@@ -72,6 +84,23 @@ services:
       POSTGREST_SCHEMA: public
       PG_PASSWORD: postgres
       PG_DB: postgres
+
+  postgraphql:
+    image: postgraphql
+    environment:
+        DB_GRAPHQL_PATH: "/graphql"
+        DB_GRAPHIQL_PATH: "/graphiql"
+        PG_SECRET: "deadbeefcafe"
+        DB_URI: "postgres://postgres:postgres@db:5432/postgres"
+        DB_SCHEMA: "public"
+        CORS: 1
+    links:
+        - "tripal_db:db"
+
+  pgadmin4:
+    image: thajeztah/pgadmin4
+    links:
+      - "tripal_db:db"
 
   ngadmin:
     image: quay.io/erasche/chado-angular-admin:latest
