@@ -91,14 +91,27 @@ services:
         DB_GRAPHQL_PATH: "/graphql"
         DB_GRAPHIQL_PATH: "/graphiql"
         PG_SECRET: "deadbeefcafe"
-        DB_SCHEMA: "public"
-        PGHOST: db
         PGUSER: postgres
         PGPASSWORD: postgres
+        PGHOST: db
         PGPORT: 5432
         PGDATABASE: postgres
+        DB_SCHEMA: "public"
     links:
         - "tripal_db:db"
+
+  postgraphql-refseqs:
+    build: refseqs
+    ports:
+      - "9997:5000"
+    environment:
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGHOST: postgres
+      PGPORT: 5432
+      PGDATABASE: postgres
+    links:
+      - "tripal_db:db"
 
   pgadmin4:
     image: thajeztah/pgadmin4
