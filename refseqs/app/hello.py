@@ -22,10 +22,11 @@ logging.getLogger('flask_cors').level = logging.DEBUG
 def refseqsjson():
       # {"name": "chr1", "start": 0, "end": 12345678},
 
-    result = s.execute('select name, seqlen from chado.feature where seqlen > 0 and feature.organism_id in (select organism_id from chado.organism);')
+    result = s.execute('select feature.name, feature.seqlen, organism.common_name from chado.feature, chado.organism where seqlen > 0 and feature.organism_id = organism.organism_id;')
     response = []
     for r in result.fetchall():
         response.append({
+            'organism': r[2],
             'name': r[0],
             'start': 0,
             'end': r[1],

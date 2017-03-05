@@ -11,9 +11,10 @@ services:
         - galaxy
         - tripal
         #- ngadmin
-        #- chado_jb
-        #- jbrowse
-        #- postgrest
+        - chado_jb
+        - jbrowse
+        - jbrowse-graphql
+        - postgrest
         #- postgrest_tripal
         - postgraphql
         - pgadmin4
@@ -87,18 +88,18 @@ services:
     environment:
       POSTGRES_PASSWORD: postgres
 
-  #postgrest:
-    #image: quay.io/erasche/postgrest:latest
-    #links:
-      #- "tripal_db:db"
-    #environment:
-      #POSTGREST_JWT_SECRET: thisisnotarealsecret
-      #POSTGREST_SCHEMA: chado
-      #PG_PASSWORD: postgres
-      #PG_DB: postgres
+  postgrest:
+    image: quay.io/erasche/postgrest:latest
+    links:
+      - "tripal_db:db"
+    environment:
+      POSTGREST_JWT_SECRET: thisisnotarealsecret
+      POSTGREST_SCHEMA: chado
+      PG_PASSWORD: postgres
+      PG_DB: postgres
 
   postgraphql: ## GraphQL interface to Postgres
-    image: erasche/postgraphql:latest
+    image: erasche/postgraphql:gmod-hacks
     environment:
         DB_GRAPHQL_PATH: "/graphql"
         DB_GRAPHIQL_PATH: "/graphiql"
@@ -108,7 +109,7 @@ services:
         PGHOST: tripal_db
         PGPORT: 5432
         PGDATABASE: postgres
-        DB_SCHEMA: "chado"
+        DB_SCHEMA: "public,chado"
     links:
         - "tripal_db"
     ports:
@@ -116,8 +117,6 @@ services:
 
   postgraphql-refseqs: ## PostGraphQL refseq server (required for JBrowse integration)
     build: refseqs
-    ports:
-      - "9997:5000"
     environment:
       PGUSER: postgres
       PGPASSWORD: postgres
@@ -126,8 +125,6 @@ services:
       PGDATABASE: postgres
     links:
       - "tripal_db:db"
-    ports:
-        - "5000"
 
   pgadmin4: ## Postgres Admin Site
     image: thajeztah/pgadmin4
@@ -197,5 +194,8 @@ services:
     image: erasche/jbrowse:1.12.0
     volumes_from:
         - "galaxy:ro"
-    ports:
-        - "80"
+
+  jbrowse-graphql:
+    image: erasche/jbrowse:1.12.0
+    volumes:
+        - "./jbgraphql:/data"
