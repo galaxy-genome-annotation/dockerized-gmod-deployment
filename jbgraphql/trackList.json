@@ -19,6 +19,11 @@
 			"key"        : "PostGraphQL Features",
 			"type"       : "JBrowse/View/Track/CanvasFeatures",
 			"storeClass" : "PostGraphQL/Store/SeqFeature/GraphQL",
+			"style": {
+				"color": "function(feature){ console.log(feature.data.type); if(feature.data.type == 'exon'){ return '#ff9a40'; } return '#028e9b'; }",
+				"height": "function(feature){ console.log(feature.data.type); if(feature.data.type == 'exon'){ return 9; } return 12; }",
+			},
+			"subParts": "exon, CDS"
 		}
 	],
 	"formatVersion" : 1
