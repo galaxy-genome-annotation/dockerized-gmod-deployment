@@ -1,91 +1,103 @@
 version: '2'
 services:
 
-  proxy:
+  proxy: ## Proxy Image
     image: nginx:latest
     ports:
         - "8200:80"
     links:
+        - remoteuser
         - apollo
         - galaxy
         - tripal
-        - ngadmin
-        - chado_jb
-        - jbrowse
-        - postgrest
-        - postgrest_tripal
+        #- ngadmin
+        #- chado_jb
+        #- jbrowse
+        #- postgrest
+        #- postgrest_tripal
         - postgraphql
+        - pgadmin4
     volumes:
         - "./nginx:/etc/nginx/conf.d"
 
-  remoteuser:
+  remoteuser: ## Remote User Proxy for Apollo (based on Galaxy Auth)
     image: "quay.io/erasche/gx-cookie-proxy:latest"
     environment:
-      GALAXY_DB_URL: "postgresql://postgres:postgres@db.postgres.rancher.internal:5432/postgres?client_encoding=utf8&sslmode=disable"
-      GALAXY_SECRET: "?????"
+      GALAXY_DB_URL: "postgresql://galaxy:galaxy@galaxy:5432/galaxy?client_encoding=utf8&sslmode=disable"
+      GALAXY_SECRET: "0xdeadbeefcafe"
       GXC_BACKEND_URL: "target:8080"
+      GXC_LOGLEVEL: DEBUG
     links:
       - galaxy:galaxy
       - apollo:target
+    ports:
+        - "5000"
 
-  galaxy:
-    image: quay.io/erasche/docker-galaxy-annotation
+  galaxy: ## Galaxy, yay!
+    image: gga #quay.io/galaxy-genome-annotation/docker-galaxy-annotation:master
     environment:
         NONUSE: nodejs,proftp,reports
         GALAXY_LOGGING: full
+        GALAXY_CONFIG_BRAND: "GMOD"
         GALAXY_WEBAPOLLO_URL: "http://apollo:8080/apollo"
         GALAXY_WEBAPOLLO_EXT_URL: "/apollo"
         GALAXY_WEBAPOLLO_PASSWORD: "password"
         GALAXY_WEBAPOLLO_USER: admin@local.host
         GALAXY_SHARED_DIR: /apollo-data
         GALAXY_JBROWSE_SHARED_DIR: /jbrowse/data
+        GALAXY_ID_SECRET: "0xdeadbeefcafe"
+    ports:
+        - "80"
+    volumes:
+        - "./galaxy.ini:/etc/galaxy/galaxy.ini"
 
-  apollo:
+  apollo: ## Apollo, the genome annotation suite
     image: quay.io/erasche/apollo:remote_user
     links:
-      - "apollo_db:db"
+      - "apollo_db"
       - "tripal_db"
     environment:
       CONTEXT_PATH: "apollo"
       WEBAPOLLO_DB_USERNAME: postgres
-      WEBAPOLLO_DB_PASSWORD: password
+      WEBAPOLLO_DB_PASSWORD: postgres
       WEBAPOLLO_DB_DRIVER: "org.postgresql.Driver"
       WEBAPOLLO_DB_DIALECT: "org.hibernate.dialect.PostgresPlusDialect"
-      WEBAPOLLO_DB_URI: "jdbc:postgresql://db/postgres"
+      WEBAPOLLO_DB_URI: "jdbc:postgresql://apollo_db/postgres"
       WEBAPOLLO_CHADO_DB_USERNAME: postgres
       WEBAPOLLO_CHADO_DB_PASSWORD: postgres
       WEBAPOLLO_CHADO_DB_DRIVER: "org.postgresql.Driver"
       WEBAPOLLO_CHADO_DB_DIALECT: "org.hibernate.dialect.PostgresPlusDialect"
       WEBAPOLLO_CHADO_DB_URI: "jdbc:postgresql://tripal_db/postgres"
+      # Optional, allow image to 'wait'
+      WEBAPOLLO_DB_HOST: apollo_db
+      WEBAPOLLO_DB_PORT: 5432
+      WEBAPOLLO_DB_NAME: postgres
+      WEBAPOLLO_CHADO_DB_HOST: tripal_db
+      WEBAPOLLO_CHADO_DB_PORT: 5432
+      WEBAPOLLO_CHADO_DB_NAME: postgres
+      # Configure admin user email
+      APOLLO_ADMIN_EMAIL: admin@galaxy.org
     volumes_from:
         - "galaxy:ro"
+    ports:
+        - "8080"
 
-  apollo_db:
-    image: postgres:9.4
+  apollo_db: ## Apollo's Postgres DB
+    image: postgres:9.5
     environment:
-      POSTGRES_PASSWORD: password
+      POSTGRES_PASSWORD: postgres
 
-  postgrest:
-    image: quay.io/erasche/postgrest:latest
-    links:
-      - "tripal_db:db"
-    environment:
-      POSTGREST_JWT_SECRET: thisisnotarealsecret
-      POSTGREST_SCHEMA: chado
-      PG_PASSWORD: postgres
-      PG_DB: postgres
+  #postgrest:
+    #image: quay.io/erasche/postgrest:latest
+    #links:
+      #- "tripal_db:db"
+    #environment:
+      #POSTGREST_JWT_SECRET: thisisnotarealsecret
+      #POSTGREST_SCHEMA: chado
+      #PG_PASSWORD: postgres
+      #PG_DB: postgres
 
-  postgrest_tripal:
-    image: quay.io/erasche/postgrest:latest
-    links:
-      - "tripal_db:db"
-    environment:
-      POSTGREST_JWT_SECRET: thisisnotarealsecret
-      POSTGREST_SCHEMA: public
-      PG_PASSWORD: postgres
-      PG_DB: postgres
-
-  postgraphql:
+  postgraphql: ## GraphQL interface to Postgres
     image: erasche/postgraphql:latest
     environment:
         DB_GRAPHQL_PATH: "/graphql"
@@ -93,38 +105,49 @@ services:
         PG_SECRET: "deadbeefcafe"
         PGUSER: postgres
         PGPASSWORD: postgres
-        PGHOST: db
+        PGHOST: tripal_db
         PGPORT: 5432
         PGDATABASE: postgres
-        DB_SCHEMA: "public"
+        DB_SCHEMA: "chado"
     links:
-        - "tripal_db:db"
+        - "tripal_db"
+    ports:
+        - "5000"
 
-  postgraphql-refseqs:
+  postgraphql-refseqs: ## PostGraphQL refseq server (required for JBrowse integration)
     build: refseqs
     ports:
       - "9997:5000"
     environment:
       PGUSER: postgres
       PGPASSWORD: postgres
-      PGHOST: postgres
+      PGHOST: tripal_db
       PGPORT: 5432
       PGDATABASE: postgres
     links:
       - "tripal_db:db"
-
-  pgadmin4:
-    image: thajeztah/pgadmin4
-    links:
-      - "tripal_db:db"
-
-  ngadmin:
-    image: quay.io/erasche/chado-angular-admin:latest
-    links:
-      - "postgrest"
-      - "postgrest_tripal"
     ports:
-      - "8400:80"
+        - "5000"
+
+  pgadmin4: ## Postgres Admin Site
+    image: thajeztah/pgadmin4
+    ports:
+        - 9996:5050
+    links:
+      - "apollo_db:apollo"
+      - "tripal_db:tripal"
+    ports:
+        - "5050"
+    volumes:
+        - "./pgadmin4.db:/pgadmin/config/pgadmin4.db"
+
+  #ngadmin:
+    #image: quay.io/erasche/chado-angular-admin:latest
+    #links:
+      #- "postgrest"
+      #- "postgrest_tripal"
+    #ports:
+      #- "8400:80"
 
   chado_jb:
     image: quay.io/erasche/chado-jbrowse-connector:latest
@@ -137,20 +160,25 @@ services:
     ports:
       - "8500:8500"
 
-  tripal_db:
+  tripal_db: ## Tripal's Postgres Database
     image: erasche/chado:1.31-jenkins97-pg9.5
     environment:
       - POSTGRES_PASSWORD=postgres
         # The default chado image would try to install the schema on first run,
         # we just want the tools to be available.
       - INSTALL_CHADO_SCHEMA=0
+      - INSTALL_YEAST_DATA=0
     volumes:
       - /var/lib/postgresql/data/
+    ports:
+      - 5432
 
-  tripal:
-    image: quay.io/erasche/tripal:latest
+  tripal: ## Tripal
+    #image: erasche/tripal:latest
+    image: tripal
     links:
       - tripal_db:postgres
+      - elasticsearch:elasticsearch
     volumes:
       - /var/www/html/sites
       - /var/www/private
@@ -159,8 +187,11 @@ services:
       MEMORY_LIMIT: 128M
       TRIPAL_GIT_CLONE_MODULES: "https://github.com/abretaud/tripal_rest_api.git"
       TRIPAL_ENABLE_MODULES: "tripal_rest_api"
-    #ports:
-      #- "8080:80"
+      BASE_URL: "http://localhost:8200/tripal"
+      BASE_URL_PROTO: "http://"
+
+  elasticsearch:
+    image: elasticsearch
 
   jbrowse:
     image: erasche/jbrowse:1.12.0
