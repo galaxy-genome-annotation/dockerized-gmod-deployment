@@ -31,8 +31,6 @@ services:
     links:
       - galaxy:galaxy
       - apollo:target
-    ports:
-        - "5000"
 
   galaxy: ## Galaxy, yay!
     image: gga #quay.io/galaxy-genome-annotation/docker-galaxy-annotation:master
@@ -47,8 +45,6 @@ services:
         GALAXY_SHARED_DIR: /apollo-data
         GALAXY_JBROWSE_SHARED_DIR: /jbrowse/data
         GALAXY_ID_SECRET: "0xdeadbeefcafe"
-    ports:
-        - "80"
     volumes:
         - "./galaxy.ini:/etc/galaxy/galaxy.ini"
 
@@ -80,8 +76,6 @@ services:
       APOLLO_ADMIN_EMAIL: admin@galaxy.org
     volumes_from:
         - "galaxy:ro"
-    ports:
-        - "8080"
 
   apollo_db: ## Apollo's Postgres DB
     image: postgres:9.5
@@ -112,8 +106,6 @@ services:
         DB_SCHEMA: "public,chado"
     links:
         - "tripal_db"
-    ports:
-        - "5000"
 
   postgraphql-refseqs: ## PostGraphQL refseq server (required for JBrowse integration)
     build: refseqs
@@ -129,12 +121,10 @@ services:
   pgadmin4: ## Postgres Admin Site
     image: thajeztah/pgadmin4
     ports:
-        - 9996:5050
+        - 8201:5050
     links:
       - "apollo_db:apollo"
       - "tripal_db:tripal"
-    ports:
-        - "5050"
     volumes:
         - "./pgadmin4.db:/pgadmin/config/pgadmin4.db"
 
@@ -154,8 +144,6 @@ services:
       JBROWSE: "http://localhost:8200/jbrowse_actual/"
     links:
       - "tripal_db:db"
-    ports:
-      - "8500:8500"
 
   tripal_db: ## Tripal's Postgres Database
     image: erasche/chado:1.31-jenkins97-pg9.5
@@ -167,8 +155,6 @@ services:
       - INSTALL_YEAST_DATA=0
     volumes:
       - /var/lib/postgresql/data/
-    ports:
-      - 5432
 
   tripal: ## Tripal
     #image: erasche/tripal:latest
