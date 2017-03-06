@@ -31,9 +31,18 @@ But wait, there's more! Data in Chado is made available in **JBrowse**
 
 ## Running
 
+```console
+$ docker-compose pull # Pull all images
+$ docker-compose up -d apollo_db tripal_db # Launch the DBs
 ```
-$ docker-compose up -d
-$ docker-compose logs
+
+In a new terminal, in the same folder, run `docker-compose logs -f` in order to
+watch what is going on.
+
+```
+$ docker-compose up -d tripal # Wait for tripal to come up and install Chado.
+$ # It takes a few minutes. I believe you'll see an apache error when ready.
+$ docker-compose up -d # This will bring up the rest of the services.
 ```
 
 ## Services:
