@@ -1,0 +1,3 @@
+[submodule "jbgraphql/PostGraphQL"]
+	path = jbgraphql/PostGraphQL
+	url = https://github.com/erasche/jbrowse-chado-postgraphql/

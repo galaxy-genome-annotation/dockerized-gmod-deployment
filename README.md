@@ -28,28 +28,35 @@ But wait, there's more! Data in Chado is made available in **JBrowse**
 
 ![](./media/jbrowse.png)
 
-and an experimental, AngularJS Chado Interface
-
-![](./media/angular.png)
-
 
 ## Running
 
+```console
+$ docker-compose pull # Pull all images
+$ docker-compose up -d apollo_db tripal_db # Launch the DBs
 ```
-$ docker-compose up -d
-$ docker-compose logs
+
+In a new terminal, in the same folder, run `docker-compose logs -f` in order to
+watch what is going on.
+
+```
+$ docker-compose up -d tripal # Wait for tripal to come up and install Chado.
+$ # It takes a few minutes. I believe you'll see an apache error when ready.
+$ docker-compose up -d # This will bring up the rest of the services.
 ```
 
 ## Services:
 
-Service                          | Port
+Service                          | Address
 -------------------------------- | ----
-Galaxy                           | 8200
-Tripal (/tripal)                 | 8200/tripal
-Apollo (through Galaxy, /apollo) | 8200/apollo
-PostgREST                        | 8300
-Angular Chado Admin              | 8200/chado/
-Chado JBrowse Connector          | 8200/jbrowse/
+Galaxy                           | :8200
+Tripal (/tripal)                 | :8200/tripal
+Apollo (through Galaxy, /apollo) | :8200/apollo
+Chado JBrowse Connector          | :8200/jbrowse/
+PostgREST                        | :8200/postgrest
+PostGraphQL Graph*i*QL interface | :8200/graphiql
+PgAdmin4                         | :8201/
+Chado PostGraphQL Connector      | :8200/jbrowse_graphql/
 
 ## Credentials
 
@@ -65,12 +72,13 @@ build status images here for developer convenience
 
 Image               | Status
 -----               | ------
-galaxy              | ![](https://quay.io/repository/erasche/docker-galaxy-annotation/status)
+galaxy              | ![](https://quay.io/repository/galaxy-genome-annotation/docker-galaxy-annotation/status)
 postgrest           | ![](https://quay.io/repository/erasche/postgrest/status)
-chado-angular       | ![](https://quay.io/repository/erasche/chado-angular-admin/status)
-chado-jb-connectory | ![](https://quay.io/repository/erasche/chado-jbrowse-connector/status)
+postgraphql         | [![Docker Automated build](https://img.shields.io/docker/automated/erasche/postgraphql.svg?style=flat-square)](https://hub.docker.com/erasche/postgraphql)
+chado-jb-connector  | ![](https://quay.io/repository/erasche/chado-jbrowse-connector/status)
 chado               | ![](https://quay.io/repository/erasche/chado/status)
 tripal              | ![](https://quay.io/repository/erasche/tripal/status)
+gx-cookie-proxy     | ![](https://quay.io/repository/erasche/gx-cookie-proxy/status)
 
 ## LICENSE
 
