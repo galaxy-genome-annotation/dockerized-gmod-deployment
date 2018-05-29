@@ -1,7 +1,6 @@
 # nginx-gunicorn-flask
 
 FROM python:2.7-alpine
-MAINTAINER Eric Rasche <esr@tamu.edu
 
 RUN apk update && \
 	apk add python postgresql-client postgresql-dev gcc musl-dev
