@@ -146,7 +146,7 @@ services:
       - "tripal_db:db"
 
   tripal_db: ## Tripal's Postgres Database
-    image: erasche/chado:1.31-jenkins97-pg9.5
+    image: quay.io/galaxy-genome-annotation/chado:1.31-jenkins97-pg9.5
     environment:
       - POSTGRES_PASSWORD=postgres
         # The default chado image would try to install the schema on first run,
@@ -157,7 +157,7 @@ services:
       - /var/lib/postgresql/data/
 
   tripal: ## Tripal
-    image: erasche/tripal:latest
+    image: quay.io/galaxy-genome-annotation/tripal:latest
     links:
       - tripal_db:postgres
       - elasticsearch:elasticsearch
@@ -176,11 +176,11 @@ services:
     image: elasticsearch
 
   jbrowse:
-    image: erasche/jbrowse:1.12.0
+    image: quay.io/galaxy-genome-annotation/jbrowse:1.12.5
     volumes_from:
         - "galaxy:ro"
 
   jbrowse-graphql:
-    image: erasche/jbrowse:1.12.0
+    image: quay.io/galaxy-genome-annotation/jbrowse:1.12.5
     volumes:
         - "./jbgraphql:/data"

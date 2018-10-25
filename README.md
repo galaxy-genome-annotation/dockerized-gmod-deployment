@@ -76,8 +76,8 @@ galaxy              | ![](https://quay.io/repository/galaxy-genome-annotation/do
 postgrest           | ![](https://quay.io/repository/erasche/postgrest/status)
 postgraphql         | [![Docker Automated build](https://img.shields.io/docker/automated/erasche/postgraphql.svg?style=flat-square)](https://hub.docker.com/erasche/postgraphql)
 chado-jb-connector  | ![](https://quay.io/repository/erasche/chado-jbrowse-connector/status)
-chado               | ![](https://quay.io/repository/erasche/chado/status)
-tripal              | ![](https://quay.io/repository/erasche/tripal/status)
+chado               | ![](https://quay.io/repository/galaxy-genome-annotation/chado/status)
+tripal              | ![](https://quay.io/repository/galaxy-genome-annotation/tripal/status)
 gx-cookie-proxy     | ![](https://quay.io/repository/erasche/gx-cookie-proxy/status)
 
 ## LICENSE
