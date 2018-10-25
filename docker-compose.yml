@@ -167,10 +167,7 @@ services:
     environment:
       UPLOAD_LIMIT: 20M
       MEMORY_LIMIT: 128M
-      TRIPAL_GIT_CLONE_MODULES: "https://github.com/abretaud/tripal_rest_api.git"
-      TRIPAL_ENABLE_MODULES: "tripal_rest_api"
-      BASE_URL: "http://localhost:8200/tripal"
-      BASE_URL_PROTO: "http://"
+      BASE_URL_PATH: /tripal
 
   elasticsearch:
     image: elasticsearch
