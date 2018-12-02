@@ -170,14 +170,14 @@ services:
       BASE_URL_PATH: /tripal
 
   elasticsearch:
-    image: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.5.1
 
   jbrowse:
-    image: quay.io/galaxy-genome-annotation/jbrowse:1.12.5
+    image: quay.io/galaxy-genome-annotation/jbrowse:v1.12.5
     volumes_from:
         - "galaxy:ro"
 
   jbrowse-graphql:
-    image: quay.io/galaxy-genome-annotation/jbrowse:1.12.5
+    image: quay.io/galaxy-genome-annotation/jbrowse:v1.12.5
     volumes:
         - "./jbgraphql:/data"
