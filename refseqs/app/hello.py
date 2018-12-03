@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from flask import Flask, jsonify
-from flask.ext.sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS, cross_origin
 import sqlalchemy
 from sqlalchemy.orm import sessionmaker, scoped_session
