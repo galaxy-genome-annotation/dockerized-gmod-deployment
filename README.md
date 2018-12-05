@@ -64,6 +64,9 @@ Service | Username         | Password
 ------- | ---------------- | ---------
 Galaxy  | admin@galaxy.org | admin
 Tripal  | admin            | changeme
+Apollo  | admin@local.host | password
+
+The Apollo account is only used internally by the Galaxy tools. You should be automatically logged in with your Galaxy account when connecting to Apollo (thanks to [gx-cookie-proxy](https://github.com/erasche/gx-cookie-proxy)).
 
 ## Dependencies
 
