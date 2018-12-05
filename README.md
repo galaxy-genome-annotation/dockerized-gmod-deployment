@@ -85,8 +85,11 @@ gx-cookie-proxy     | ![](https://quay.io/repository/erasche/gx-cookie-proxy/sta
 Each Docker image can be configured to fit your needs. You should consult the documentation of each image, in particular:
 
 [Galaxy Docker image documentation](https://github.com/bgruening/docker-galaxy-stable)
+
 [Tripal Docker image documentation](https://github.com/galaxy-genome-annotation/docker-tripal)
+
 [Chado Docker image documentation](https://github.com/galaxy-genome-annotation/docker-chado)
+
 [Apollo Docker image documentation](https://github.com/galaxy-genome-annotation/docker-apollo)
 
 ## LICENSE
