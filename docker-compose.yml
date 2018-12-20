@@ -149,7 +149,7 @@ services:
       - "tripal_db:db"
 
   tripal_db: ## Tripal's Postgres Database
-    image: quay.io/galaxy-genome-annotation/chado:1.31-jenkins97-pg9.5
+    image: quay.io/galaxy-genome-annotation/chado:1.31-jenkins21-pg9.5
     environment:
       - POSTGRES_PASSWORD=postgres
         # The default chado image would try to install the schema on first run,
